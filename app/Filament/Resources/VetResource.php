@@ -18,27 +18,39 @@ class VetResource extends Resource
     protected static ?string $model = Vet::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    protected static ?string $modelLabel = 'Veterinario';
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('vet_name')
+                Forms\Components\TextInput::make('user.name')
+                    ->label('Nombre de usuario')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('user_id')
+                Forms\Components\TextInput::make('user.email')
+                    ->label('Email')
+                    ->email()
                     ->required()
-                    ->numeric(),
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('user.password')
+                    ->label('Contraseña')    
+                    ->password()
+                    ->required()
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('phone')
+                    ->label('Teléfono')
                     ->tel()
                     ->required()
                     ->maxLength(255),
                 Forms\Components\DatePicker::make('birthdate')
+                    ->label('Fecha de nacimiento')
                     ->required(),
                 Forms\Components\TextInput::make('license_number')
+                    ->label('Número de licencia')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('speciality')
+                    ->label('Especialidad')
                     ->required()
                     ->maxLength(255),
             ]);
@@ -48,19 +60,24 @@ class VetResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('vet_name')
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Nombre de usuario')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('user_id')
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('user.email')
+                    ->label('Email')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('phone')
+                    ->label('Teléfono')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('birthdate')
+                    ->label('Fecha de nacimiento')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('license_number')
+                    ->label('Número de licencia')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('speciality')
+                    ->label('Especialidad')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
