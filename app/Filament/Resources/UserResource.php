@@ -17,28 +17,15 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-<<<<<<< HEAD
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-=======
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
     protected static ?string $navigationGroup = 'Usuarios';
     protected static ?string $modelLabel = 'Usuario';
->>>>>>> michel_branch
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-<<<<<<< HEAD
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\DateTimePicker::make('email_verified_at'),
-=======
                     ->label('Nombre de usuario')
                     ->required()
                     ->maxLength(255),
@@ -47,7 +34,6 @@ class UserResource extends Resource
                     ->email()
                     ->required()
                     ->maxLength(255),
->>>>>>> michel_branch
                 Forms\Components\TextInput::make('password')
                     ->password()
                     ->required()
@@ -65,12 +51,8 @@ class UserResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email_verified_at')
                     ->dateTime()
-<<<<<<< HEAD
-                    ->sortable(),
-=======
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
->>>>>>> michel_branch
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

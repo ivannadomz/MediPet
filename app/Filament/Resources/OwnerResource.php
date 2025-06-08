@@ -29,7 +29,7 @@ class OwnerResource extends Resource
                     ->label('Nombre de usuario')
                     ->required()
                     ->maxLength(255),
-                    Forms\Components\TextInput::make('user.email')
+                Forms\Components\TextInput::make('user.email')
                     ->label('Email')
                     ->email()
                     ->required()

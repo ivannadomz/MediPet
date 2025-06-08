@@ -8,9 +8,6 @@ use App\Models\Vet;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Filament\Resources\Pages\CreateRecord;
-use App\Models\Vet;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 
 class CreateVet extends CreateRecord
 {
