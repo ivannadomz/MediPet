@@ -50,8 +50,8 @@ class AppointmentsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('appointment_date')
             ->columns([
-                Tables\Columns\TextColumn::make('vet.name')
-                    ->label('Nombre'),
+                Tables\Columns\TextColumn::make('pet.name')
+                    ->label('Mascota'),
                 Tables\Columns\TextColumn::make('appointment_date')
                     ->label('Fecha Programada')
                     ->dateTime(),

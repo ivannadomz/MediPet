@@ -17,7 +17,7 @@ class OwnerResource extends Resource
 {
     protected static ?string $model = Owner::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
     protected static ?string $navigationGroup = 'Usuarios';
     protected static ?string $modelLabel = 'Dueño';
 
