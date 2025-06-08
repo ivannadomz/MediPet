@@ -17,20 +17,35 @@ class OwnerResource extends Resource
 {
     protected static ?string $model = Owner::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-user';
+    protected static ?string $navigationGroup = 'Usuarios';
+    protected static ?string $modelLabel = 'Dueño';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('user_id')
+                Forms\Components\TextInput::make('user.name')
+                    ->label('Nombre de usuario')
                     ->required()
-                    ->numeric(),
+                    ->maxLength(255),
+                    Forms\Components\TextInput::make('user.email')
+                    ->label('Email')
+                    ->email()
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('user.password')
+                    ->label('Contraseña')
+                    ->password()
+                    ->required()
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('phone')
+                    ->label('Teléfono')
                     ->tel()
                     ->required()
                     ->numeric(),
                 Forms\Components\Textarea::make('address')
+                    ->label('Dirección')
                     ->required()
                     ->columnSpanFull(),
             ]);
@@ -40,12 +55,17 @@ class OwnerResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('user_id')
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Nombre de usuario')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('user.email')
+                    ->label('Email')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('phone')
-                    ->numeric()
-                    ->sortable(),
+                    ->label('Teléfono')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('address')
+                    ->label('Dirección'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -71,7 +91,7 @@ class OwnerResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\PetsRelationManager::class,
         ];
     }
 

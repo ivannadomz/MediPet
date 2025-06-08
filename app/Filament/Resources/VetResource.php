@@ -16,7 +16,8 @@ class VetResource extends Resource
 {
     protected static ?string $model = Vet::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-user-plus';
+    protected static ?string $navigationGroup = 'Usuarios';
     protected static ?string $modelLabel = 'Veterinario';
     public static function form(Form $form): Form
     {
@@ -103,7 +104,7 @@ class VetResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\AppointmentsRelationManager::class
+            RelationManagers\AppointmentsRelationManager::class,
         ];
     }
 

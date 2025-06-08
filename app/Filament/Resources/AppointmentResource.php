@@ -17,28 +17,45 @@ class AppointmentResource extends Resource
 {
     protected static ?string $model = Appointment::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-calendar';
+    protected static ?string $navigationGroup = 'Historial';
+    protected static ?string $modelLabel = 'Citas';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('vet_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('pet_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('branch_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\DatePicker::make('appointment_date')
+                Forms\Components\Select::make('vet_id')
+                    ->label('Veterinario')
+                    ->options(\App\Models\Vet::with('user')->get()->pluck('user.name', 'id'))
+                    ->searchable()
+                    ->preload()
                     ->required(),
-                Forms\Components\TextInput::make('status')
-                    ->required()
-                    ->maxLength(255)
-                    ->default('scheduled'),
+                Forms\Components\Select::make('pet_id')
+                    ->label('Mascota')
+                    ->relationship('pet', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->required(),
+                Forms\Components\Select::make('branch_id')
+                    ->label('Sucursal')
+                    ->relationship('branch', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->required(),
+                Forms\Components\DatePicker::make('appointment_date')
+                    ->label('Fecha de cita')
+                    ->required(),
+                Forms\Components\Select::make('status')
+                    ->label('Estatus')
+                    ->options([
+                        'scheduled' => 'Programada',
+                        'completed' => 'Completada',
+                        'canceled' => 'Cancelada',
+                    ])
+                    ->required(),
                 Forms\Components\Textarea::make('reason')
+                    ->label('Motivo')
                     ->required()
                     ->columnSpanFull(),
             ]);
@@ -48,20 +65,27 @@ class AppointmentResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('vet_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('pet_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('branch_id')
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('vet.user.name')
+                    ->label('Veterinario')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('pet.name')
+                    ->label('Mascota')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('branch.name')
+                    ->label('Sucursal'),
                 Tables\Columns\TextColumn::make('appointment_date')
+                    ->label('Fecha de cita')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->searchable(),
+                    ->label('Estatus')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'scheduled' => 'info',
+                        'completed' => 'success',
+                        'canceled' => 'danger',
+                        default => 'gray',
+                    }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -87,7 +111,7 @@ class AppointmentResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\PrescriptionsRelationManager::class,
         ];
     }
 

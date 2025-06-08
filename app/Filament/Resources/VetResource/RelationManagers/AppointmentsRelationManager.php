@@ -20,18 +20,22 @@ class AppointmentsRelationManager extends RelationManager
         return $form
             ->schema([
                 Forms\Components\Select::make('pet_id')
+                    ->label('Nombre de la Mascota')
                     ->relationship('pet', 'name')
                     ->searchable()
                     ->preload()
                     ->required(),
                 Forms\Components\DateTimePicker::make('appointment_date')
+                    ->label('Fecha de cita')
                     ->required(),
                 Forms\Components\Select::make('branch_id')
+                    ->label('Sucursal')
                     ->relationship('branch', 'name')
                     ->searchable()
                     ->preload()
                     ->required(),
                 Forms\Components\Select::make('status')
+                    ->label('Estatus')
                     ->options([
                         'scheduled' => 'Programada',
                         'completed' => 'Completada',
@@ -42,7 +46,6 @@ class AppointmentsRelationManager extends RelationManager
                     ->label('Motivo')
                     ->required()
                     ->columnSpanFull(),
-              
             ]);
     }
 
@@ -51,8 +54,9 @@ class AppointmentsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('appointment_date')
             ->columns([
-                Tables\Columns\TextColumn::make('vet.name')
-                    ->label('Nombre'),
+                Tables\Columns\TextColumn::make('pet.name')
+                    ->label('Mascota')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('appointment_date')
                     ->label('Fecha Programada')
                     ->dateTime(),
