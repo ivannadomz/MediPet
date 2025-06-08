@@ -11,9 +11,9 @@ class Pet extends Model
         'birthdate',
         'gender',
         'weight',
-        'race',
         'allergies',
         'species_id',
+        'race_id',
         'owner_id',
     ];
 
@@ -27,7 +27,10 @@ class Pet extends Model
         return $this->belongsTo(User::class, 'owner_id');
     }
 
-    
+    public function race()
+    {
+    return $this->belongsTo(Race::class, 'race_id');
+    }
 
     public function appointment()
     {

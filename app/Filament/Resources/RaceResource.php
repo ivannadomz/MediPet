@@ -27,7 +27,8 @@ class RaceResource extends Resource
 
                 Forms\Components\Select::make('species_id')
                     ->label('Especie')
-                    ->relationship('specie', 'specie')  
+                    ->relationship('specie', 'specie')
+                    ->preload()  
                     ->searchable()
                     ->required(),
             ]);

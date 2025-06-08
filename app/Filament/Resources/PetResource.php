@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PetResource\Pages;
 use App\Models\Pet;
+use App\Models\Race;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -29,8 +30,15 @@ class PetResource extends Resource
                     ->label('Nacimiento')
                     ->required(),
 
+                Forms\Components\Select::make('owner_id')
+                    ->label('Dueño')
+                    ->relationship('user', 'name')
+                    ->preload()
+                    ->searchable()
+                    ->required(),
+                    
                 Forms\Components\TextInput::make('gender')
-                    ->label('Genero')
+                    ->label('Género')
                     ->required(),
 
                 Forms\Components\TextInput::make('weight')
@@ -43,21 +51,27 @@ class PetResource extends Resource
                     ->required()
                     ->columnSpanFull(),
 
-                
                 Forms\Components\Select::make('species_id')
                     ->label('Especie')
                     ->relationship('specie', 'specie')
                     ->searchable()
                     ->preload()
+                    ->reactive()
                     ->required(),
 
-              
-                Forms\Components\Select::make('owner_id')
-                    ->label('Dueño')
-                    ->relationship('user', 'name')
-                    ->preload()
+                Forms\Components\Select::make('race_id')
+                    ->label('Raza')
+                    ->options(function (callable $get) {
+                        $speciesId = $get('species_id');
+                        if (!$speciesId) {
+                            return [];
+                        }
+                        return Race::where('species_id', $speciesId)->pluck('name', 'id');
+                    })
                     ->searchable()
                     ->required(),
+
+                
             ]);
     }
 
@@ -77,8 +91,17 @@ class PetResource extends Resource
                     ->numeric()
                     ->sortable(),
 
+                Tables\Columns\TextColumn::make('allergies') 
+
+                    ->label('Alergias'),
+
                 Tables\Columns\TextColumn::make('specie.specie')
                     ->label('Especie')
+                    ->sortable()
+                    ->searchable(),
+
+                Tables\Columns\TextColumn::make('race.name')
+                    ->label('Raza')
                     ->sortable()
                     ->searchable(),
 
