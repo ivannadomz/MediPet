@@ -25,7 +25,8 @@ class AppointmentResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('veterinario')
+                Forms\Components\Select::make('vet_id')
+                    ->label('Veterinario')
                     ->options(\App\Models\Vet::with('user')->get()->pluck('user.name', 'id'))
                     ->searchable()
                     ->preload()
@@ -110,7 +111,7 @@ class AppointmentResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\PrescriptionsRelationManager::class,
         ];
     }
 

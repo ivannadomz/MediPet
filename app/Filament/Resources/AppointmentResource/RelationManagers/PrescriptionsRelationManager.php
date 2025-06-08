@@ -1,36 +1,27 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\AppointmentResource\RelationManagers;
 
-use App\Filament\Resources\PrescriptionResource\Pages;
-use App\Filament\Resources\PrescriptionResource\RelationManagers;
-use App\Models\Prescription;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class PrescriptionResource extends Resource
+class PrescriptionsRelationManager extends RelationManager
 {
-    protected static ?string $model = Prescription::class;
+    protected static string $relationship = 'prescriptions';
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
-    protected static ?string $navigationGroup = 'Historial';
-    protected static ?string $modelLabel = 'Prescripciones';
-
-
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
-                
                 Forms\Components\TextInput::make('reason')
                     ->label('Motivo')
                     ->required()
-                    ->columnSpanFull(),
+                    ->maxLength(255),
                 Forms\Components\Select::make('appointment_id')
                     ->label('Fecha de cita')
                     ->relationship('appointment', 'appointment_date')
@@ -63,9 +54,10 @@ class PrescriptionResource extends Resource
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
+            ->recordTitleAttribute('prescription.reason')
             ->columns([
                 Tables\Columns\TextColumn::make('reason')
                     ->label('Motivo')
@@ -101,29 +93,17 @@ class PrescriptionResource extends Resource
             ->filters([
                 //
             ])
+            ->headerActions([
+                Tables\Actions\CreateAction::make(),
+            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ListPrescriptions::route('/'),
-            'create' => Pages\CreatePrescription::route('/create'),
-            'edit' => Pages\EditPrescription::route('/{record}/edit'),
-        ];
     }
 }

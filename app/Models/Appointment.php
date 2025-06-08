@@ -27,6 +27,10 @@ class Appointment extends Model
     {
         return $this->belongsTo(Branches::class, 'branch_id');
     }
+    public function prescriptions()
+    {
+        return $this->hasMany(Prescription::class, 'appointment_id');
+    }
 
     //
 }

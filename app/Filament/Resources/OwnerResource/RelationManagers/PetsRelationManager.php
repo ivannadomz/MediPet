@@ -63,6 +63,7 @@ class PetsRelationManager extends RelationManager
                     ->searchable(),
                 Tables\Columns\TextColumn::make('birthdate')
                     ->label('Fecha de Nacimiento')
+                    ->date()
                     ->dateTime(),
                 Tables\Columns\TextColumn::make('gender')
                     ->label('Género'),
