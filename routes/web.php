@@ -13,9 +13,7 @@ Route::view('dashboard', 'dashboard')
     ->name('dashboard');
 
 
-Route::get('/admin', function () {
-    return redirect()->route('custom.login.form');
-});
+
 
 Route::get('/admin/login', [CustomLoginController::class, 'showLogInform'])->name('custom.login.form');
 Route::post('/admin/login', [CustomLoginController::class, 'login'])->name('custom.login');

@@ -2,13 +2,12 @@
 
 namespace App\Filament\Resources\OwnerResource\RelationManagers;
 
+use App\Models\Race;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PetsRelationManager extends RelationManager
 {
@@ -24,12 +23,6 @@ class PetsRelationManager extends RelationManager
                 Forms\Components\DatePicker::make('birthdate')
                     ->label('Fecha de nacimiento')
                     ->required(),
-                Forms\Components\Select::make('owner_id')
-                    ->label('Dueño')
-                    ->options(\App\Models\Owner::with('user')->get()->pluck('user.name', 'id'))
-                    ->searchable()
-                    ->preload()
-                    ->required(),
                 Forms\Components\Select::make('gender')
                     ->label('Género')
                     ->options([
@@ -44,11 +37,22 @@ class PetsRelationManager extends RelationManager
                 Forms\Components\TextInput::make('allergies')
                     ->label('Alergias')
                     ->required(),
-                Forms\Components\Select::make('specie_id')
+                Forms\Components\Select::make('species_id')
                     ->label('Especie')
                     ->relationship('specie', 'specie')
                     ->searchable()
                     ->preload()
+                    ->reactive()
+                    ->required(),
+                Forms\Components\Select::make('race_id')
+                    ->label('Raza')
+                    ->options(function (callable $get) {
+                        $speciesId = $get('species_id');
+                        return $speciesId
+                            ? Race::where('species_id', $speciesId)->pluck('name', 'id')
+                            : [];
+                    })
+                    ->searchable()
                     ->required(),
             ]);
     }
@@ -56,15 +60,14 @@ class PetsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('pet.name')
+            ->recordTitleAttribute('name')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nombre de la Mascota')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('birthdate')
                     ->label('Fecha de Nacimiento')
-                    ->date()
-                    ->dateTime(),
+                    ->date(),
                 Tables\Columns\TextColumn::make('gender')
                     ->label('Género'),
                 Tables\Columns\TextColumn::make('weight')
@@ -75,11 +78,8 @@ class PetsRelationManager extends RelationManager
                     ->limit(50),
                 Tables\Columns\TextColumn::make('specie.specie')
                     ->label('Especie'),
-                Tables\Columns\TextColumn::make('owner.user.name')
-                    ->label('Dueño'),
-            ])
-            ->filters([
-                //
+                Tables\Columns\TextColumn::make('race.name')
+                    ->label('Raza'),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make(),

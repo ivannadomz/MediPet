@@ -17,7 +17,9 @@ class SpecieResource extends Resource
 {
     protected static ?string $model = Specie::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-finger-print';
+    protected static ?string $navigationGroup = 'Mascotas';
+    protected static ?string $modelLabel = 'Especies';
 
     public static function form(Form $form): Form
     {
