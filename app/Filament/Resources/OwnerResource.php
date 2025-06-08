@@ -26,9 +26,6 @@ class OwnerResource extends Resource
                 Forms\Components\TextInput::make('user_id')
                     ->required()
                     ->numeric(),
-                Forms\Components\Textarea::make('owner_name')
-                    ->required()
-                    ->columnSpanFull(),
                 Forms\Components\TextInput::make('phone')
                     ->tel()
                     ->required()

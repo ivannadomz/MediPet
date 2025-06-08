@@ -8,7 +8,7 @@ class Owner extends Model
 {
     protected $fillable = [
         'user_id',
-        'owner_name',
+        //'owner_name',
         'phone',
         'address',
     ];

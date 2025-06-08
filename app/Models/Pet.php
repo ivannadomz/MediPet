@@ -22,7 +22,7 @@ class Pet extends Model
         return $this->belongsTo(Species::class, 'species_id');
     }
 
-    public function owner()
+    public function owners()
     {
         return $this->belongsTo(Owner::class, 'owner_id');
     }

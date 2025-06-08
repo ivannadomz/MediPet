@@ -19,9 +19,9 @@ class Vet extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public function appointment()
+    public function appointments()
     {
-        return $this->hasMany(Cita::class, 'vet_id');
+        return $this->hasMany(Appointment::class, 'vet_id');
     }
     //
 }

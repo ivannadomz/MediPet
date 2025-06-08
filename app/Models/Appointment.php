@@ -8,6 +8,8 @@ class Appointment extends Model
 {
     protected $fillable = [
         'vet_id',
+        'pet_id',
+        'branch_id',
         'appointment_date',
         'status',
         'reason',
@@ -17,7 +19,7 @@ class Appointment extends Model
     {
         return $this->belongsTo(vet::class, 'vet_id');
     }
-    public function mascota()
+    public function pet()
     {
         return $this->belongsTo(Pet::class, 'pet_id');
     }
