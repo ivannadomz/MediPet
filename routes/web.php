@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
+use App\Http\Controllers\Auth\CustomLoginController; 
 
 Route::get('/', function () {
     return view('welcome');
@@ -10,6 +11,18 @@ Route::get('/', function () {
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+
+
+Route::get('/admin', function () {
+    return redirect()->route('custom.login.form');
+});
+
+Route::get('/admin/login', [CustomLoginController::class, 'showLogInform'])->name('custom.login.form');
+Route::post('/admin/login', [CustomLoginController::class, 'login'])->name('custom.login');
+Route::post('/admin/logout', [CustomLoginController::class, 'logout'])->name('filament.admin.auth.logout');
+
+
+
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
@@ -20,3 +33,4 @@ Route::middleware(['auth'])->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
