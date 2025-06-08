@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Specie; // Importa el modelo Specie
 
 class Race extends Model
 {
@@ -11,9 +12,8 @@ class Race extends Model
         'name',
     ];
 
-   
-    public function species()
+    public function specie()
     {
-        return $this->belongsTo(Species::class);
+        return $this->belongsTo(Specie::class, 'species_id');
     }
 }

@@ -12,13 +12,13 @@ class Branches extends Model
         'phone',
         'schedule',
     ];
-    public function citas()
+    public function appointment()
     {
-        return $this->hasMany(Cita::class, 'branch_id');
+        return $this->hasMany(Appointment::class, 'branch_id');
     }
     public function products()
     {
-        return $this->hasMany(Product::class, 'branch_id');
+        return $this->hasMany(Products::class, 'branch_id');
     }
     //
 }

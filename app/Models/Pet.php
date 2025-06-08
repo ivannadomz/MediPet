@@ -17,17 +17,19 @@ class Pet extends Model
         'owner_id',
     ];
 
-    public function species()
+    public function specie()
     {
-        return $this->belongsTo(Species::class, 'species_id');
+        return $this->belongsTo(Specie::class, 'species_id');
     }
 
-    public function owners()
+    public function user()
     {
-        return $this->belongsTo(Owner::class, 'owner_id');
+        return $this->belongsTo(User::class, 'owner_id');
     }
 
-    public function appointments()
+    
+
+    public function appointment()
     {
         return $this->hasMany(Appointment::class);
     }

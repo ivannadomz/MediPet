@@ -23,24 +23,32 @@ class ProductsResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('branch_id')
-                    ->required()
-                    ->numeric(),
+               Forms\Components\Select::make('branch_id')
+                    ->label('Sucursal')
+                    ->relationship('branch', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->required(),
                 Forms\Components\TextInput::make('name')
+                    ->label('Nombre')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('price')
+                    ->label('Precio')
                     ->required()
                     ->numeric()
                     ->prefix('$'),
                 Forms\Components\TextInput::make('stock')
+                    ->label('Cantidad')
                     ->required()
                     ->numeric()
                     ->default(0),
                 Forms\Components\TextInput::make('category')
+                    ->label('Categoría')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Textarea::make('description')
+                    ->label('Descripción')
                     ->columnSpanFull(),
             ]);
     }

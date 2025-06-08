@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PetResource\Pages;
-use App\Filament\Resources\PetResource\RelationManagers;
 use App\Models\Pet;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PetResource extends Resource
 {
@@ -24,24 +21,43 @@ class PetResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label('Nombre')
                     ->required()
                     ->maxLength(255),
+
                 Forms\Components\DatePicker::make('birthdate')
+                    ->label('Nacimiento')
                     ->required(),
+
                 Forms\Components\TextInput::make('gender')
+                    ->label('Genero')
                     ->required(),
+
                 Forms\Components\TextInput::make('weight')
+                    ->label('Peso')
                     ->required()
                     ->numeric(),
+
                 Forms\Components\Textarea::make('allergies')
+                    ->label('Alergias')
                     ->required()
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('species_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('owner_id')
-                    ->required()
-                    ->numeric(),
+
+                
+                Forms\Components\Select::make('species_id')
+                    ->label('Especie')
+                    ->relationship('specie', 'specie')
+                    ->searchable()
+                    ->preload()
+                    ->required(),
+
+              
+                Forms\Components\Select::make('owner_id')
+                    ->label('Dueño')
+                    ->relationship('user', 'name')
+                    ->preload()
+                    ->searchable()
+                    ->required(),
             ]);
     }
 
@@ -49,32 +65,37 @@ class PetResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('name')->searchable(),
+
                 Tables\Columns\TextColumn::make('birthdate')
                     ->date()
                     ->sortable(),
+
                 Tables\Columns\TextColumn::make('gender'),
+
                 Tables\Columns\TextColumn::make('weight')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('species_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('owner_id')
-                    ->numeric()
-                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('specie.specie')
+                    ->label('Especie')
+                    ->sortable()
+                    ->searchable(),
+
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Dueño')
+                    ->sortable()
+                    ->searchable(),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -88,9 +109,7 @@ class PetResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

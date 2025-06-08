@@ -60,7 +60,7 @@ class SpecieResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\RaceRelationManager::class,
         ];
     }
 

@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\RaceResource\Pages;
-use App\Filament\Resources\RaceResource\RelationManagers;
 use App\Models\Race;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class RaceResource extends Resource
 {
@@ -23,7 +20,16 @@ class RaceResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Forms\Components\TextInput::make('name')
+                    ->label('Nombre de la raza')
+                    ->required()
+                    ->maxLength(255),
+
+                Forms\Components\Select::make('species_id')
+                    ->label('Especie')
+                    ->relationship('specie', 'specie')  
+                    ->searchable()
+                    ->required(),
             ]);
     }
 
@@ -31,11 +37,13 @@ class RaceResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Raza'),
+
+                Tables\Columns\TextColumn::make('specie.specie')
+                    ->label('Especie'),
             ])
-            ->filters([
-                //
-            ])
+            ->filters([])
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
@@ -48,9 +56,7 @@ class RaceResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
