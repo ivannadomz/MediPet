@@ -17,7 +17,8 @@ class VetResource extends Resource
 {
     protected static ?string $model = Vet::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+    protected static ?string $navigationGroup = 'Usuarios';
     protected static ?string $modelLabel = 'Veterinario';
     public static function form(Form $form): Form
     {

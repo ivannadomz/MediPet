@@ -11,18 +11,17 @@ class Pet extends Model
         'birthdate',
         'gender',
         'weight',
-        'race',
         'allergies',
         'species_id',
         'owner_id',
     ];
 
-    public function species()
+    public function specie()
     {
-        return $this->belongsTo(Species::class, 'species_id');
+        return $this->belongsTo(Specie::class, 'species_id');
     }
 
-    public function owners()
+    public function owner()
     {
         return $this->belongsTo(Owner::class, 'owner_id');
     }

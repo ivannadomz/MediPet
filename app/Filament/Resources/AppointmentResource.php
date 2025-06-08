@@ -31,18 +31,22 @@ class AppointmentResource extends Resource
                     ->preload()
                     ->required(),
                 Forms\Components\Select::make('pet_id')
+                    ->label('Mascota')
                     ->relationship('pet', 'name')
                     ->searchable()
                     ->preload()
                     ->required(),
                 Forms\Components\Select::make('branch_id')
+                    ->label('Sucursal')
                     ->relationship('branch', 'name')
                     ->searchable()
                     ->preload()
                     ->required(),
                 Forms\Components\DatePicker::make('appointment_date')
+                    ->label('Fecha de cita')
                     ->required(),
                 Forms\Components\Select::make('status')
+                    ->label('Estatus')
                     ->options([
                         'scheduled' => 'Programada',
                         'completed' => 'Completada',
@@ -50,6 +54,7 @@ class AppointmentResource extends Resource
                     ])
                     ->required(),
                 Forms\Components\Textarea::make('reason')
+                    ->label('Motivo')
                     ->required()
                     ->columnSpanFull(),
             ]);
@@ -59,10 +64,12 @@ class AppointmentResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('vet.name')
-                    ->label('Veterinario'),
+                Tables\Columns\TextColumn::make('vet.user.name')
+                    ->label('Veterinario')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('pet.name')
-                    ->label('Mascota'),
+                    ->label('Mascota')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('branch.name')
                     ->label('Sucursal'),
                 Tables\Columns\TextColumn::make('appointment_date')

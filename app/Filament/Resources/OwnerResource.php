@@ -91,7 +91,7 @@ class OwnerResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\PetsRelationManager::class,
         ];
     }
 
