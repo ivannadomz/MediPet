@@ -30,7 +30,24 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::hex('#A1E3F9'),
+                'secondary' => Color::hex('#F9A1A1'),
+                'success' => Color::hex('#A1F9A1'),
+                'warning' => Color::hex('#F9DFA1'),
+                'danger' => Color::hex('#F9A1A1'),
+                'info' => Color::hex('#A1C6F9'),
+                'light' => Color::hex('#F1F1F1'),
+                'dark' => Color::hex('#333333'),
+                'muted' => Color::hex('#B0B0B0'),
+                'accent' => Color::hex('#FF5722'),
+                'link' => Color::hex('#1E88E5'),
+                'text' => Color::hex('#212121'),
+                'background' => Color::hex('#FFFFFF'),
+                'border' => Color::hex('#E0E0E0'),
+                'hover' => Color::hex('#F5F5F5'),
+                'active' => Color::hex('#E0E0E0'),
+                'disabled' => Color::hex('#BDBDBD'),
+                'focus' => Color::hex('#E3F2FD'),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -41,6 +58,7 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
+                \App\Filament\Widgets\CenterImageWidget::class, // Aquí agregamos tu widget
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -62,4 +80,3 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarFullyCollapsibleOnDesktop();
     }
 }
-
