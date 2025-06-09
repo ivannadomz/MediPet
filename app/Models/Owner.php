@@ -13,6 +13,12 @@ class Owner extends Model
         'address',
     ];
 
+    protected static function booted()
+    {
+        static::deleting(function ($owner) {
+            $owner->user()->delete();
+        });
+    }
     public function pets()
     {
         return $this->hasMany(Pet::class);

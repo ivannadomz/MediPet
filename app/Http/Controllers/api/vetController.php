@@ -20,7 +20,7 @@ class vetController extends Controller
         ], 200);
     }
 
-    //Encontrar una mascota por ID
+    //Encontrar un veterinario por ID
     public function getVetById($id)
     {
         $vet = Vet::with('user')->find($id);
