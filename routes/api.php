@@ -2,14 +2,15 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\petController;
-use App\Http\Controllers\Api\vetController; 
-use App\Http\Controllers\Api\specieController;
+use App\Http\Controllers\api\petController;
+use App\Http\Controllers\api\specieController;
 use App\Http\Controllers\api\raceController;
 use App\Http\Controllers\api\prescriptionController;
 use App\Http\Controllers\api\appointmentController;
 use App\Http\Controllers\api\branchController;
 use App\Http\Controllers\api\productController;
+use App\Http\Controllers\Api\vetController;
+use App\Http\Controllers\Api\ownerController;
 
 // Rutas para Pets
 Route::get('/pets', [petController::class, 'index']);
@@ -20,12 +21,12 @@ Route::patch('/pets/{id}', [petController::class, 'updatePartial']);
 Route::delete('/pets/{id}', [petController::class, 'destroy']);
 
 // Rutas para Species
-Route::get('/species', [specieController::class, 'index']);       
-Route::get('/species/{id}', [specieController::class, 'show']);    
-Route::post('/species', [specieController::class, 'store']);        
-Route::put('/species/{id}', [specieController::class, 'update']); 
-Route::patch('/species/{id}', [specieController::class, 'updatePartial']);  
-Route::delete('/species/{id}', [specieController::class, 'destroy']); 
+Route::get('/species', [specieController::class, 'index']);
+Route::get('/species/{id}', [specieController::class, 'show']);
+Route::post('/species', [specieController::class, 'store']);
+Route::put('/species/{id}', [specieController::class, 'update']);
+Route::patch('/species/{id}', [specieController::class, 'updatePartial']);
+Route::delete('/species/{id}', [specieController::class, 'destroy']);
 
 //Rutas para Razas
 Route::get('/races', [raceController::class, 'index']);
@@ -66,3 +67,19 @@ Route::get('/products/{id}', [productController::class, 'show']);
 Route::put('/products/{id}', [productController::class, 'update']);
 Route::patch('/products/{id}', [productController::class, 'updatePartial']);
 Route::delete('/products/{id}', [productController::class, 'destroy']);
+
+//Rutas para los veterinarios
+Route::get('/vets', [vetController::class, 'getVets']);
+Route::get('/vets/{id}', [vetController::class, 'getVetById']);
+Route::post('/vets', [vetController::class, 'createVet']);
+Route::put('/vets/{id}', [vetController::class, 'updateVet']);
+Route::patch('/vets/{id}', [vetController::class, 'updateVetPartial']);
+Route::delete('/vets/{id}', [vetController::class, 'deleteVet']);
+
+//Rutas para los dueños de mascotas
+Route::get('/owners', [ownerController::class, 'getOwners']);
+Route::get('/owners/{id}', [ownerController::class, 'getOwnerById']);
+Route::post('/owners', [ownerController::class, 'createOwner']);
+Route::put('/owners/{id}', [ownerController::class, 'updateOwner']);
+Route::patch('/owners/{id}', [ownerController::class, 'updateOwnerPartial']);
+Route::delete('/owners/{id}', [ownerController::class, 'deleteOwner']);
