@@ -58,7 +58,7 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
-                \App\Filament\Widgets\CenterImageWidget::class, // Aquí agregamos tu widget
+                \App\Filament\Resources\GlobalResource\Widgets\CenterImageWidget::class, 
             ])
             ->middleware([
                 EncryptCookies::class,
