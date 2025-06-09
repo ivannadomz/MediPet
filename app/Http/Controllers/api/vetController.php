@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Vet;
+use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 
 class vetController extends Controller
@@ -12,7 +13,7 @@ class vetController extends Controller
     //Obtener todos los veterinarios
     public function getVets()
     {
-        $vets = Vet::all();
+        $vets = Vet::with('user')->get();
         return response()->json([
             'pets' => $vets,
             'status' => '200',
@@ -22,7 +23,7 @@ class vetController extends Controller
     //Encontrar una mascota por ID
     public function getVetById($id)
     {
-        $vet = Vet::find($id);
+        $vet = Vet::with('user')->find($id);
 
         if (!$vet) {
             return response()->json([
@@ -43,7 +44,11 @@ class vetController extends Controller
     public function createVet(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            "user_id" => "required|exists:users,id",
+            // Validación para usuario
+            "name" => "required|string|max:255",
+            "email" => "required|email|unique:users,email",
+            "password" => "required|string|min:6",
+            // Validación para veterinario
             "phone" => "required|unique:vets,phone",
             "birthdate" => "required|date",
             "license_number" => "required|unique:vets,license_number",
@@ -58,13 +63,23 @@ class vetController extends Controller
             ], 400);
         }
 
+        // Crear usuario
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+        ]);
+
+        // Crear veterinario
         $vet = Vet::create([
-            'user_id' => $request->user_id,
+            'user_id' => $user->id,
             'phone' => $request->phone,
             'birthdate' => $request->birthdate,
             'license_number' => $request->license_number,
             'speciality' => $request->speciality,
         ]);
+
+        $vet->load('user');
 
         return response()->json([
             'vet' => $vet,
@@ -85,11 +100,15 @@ class vetController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            "user_id" => "required|exists:users,id",
-            "phone" => "required|unique:vets,phone",
+            // Validaciones para veterinario
+            "phone" => "required|unique:vets,phone," . $vet->id,
             "birthdate" => "required|date",
-            "license_number" => "required|unique:vets,license_number",
-            "speciality" => "required"
+            "license_number" => "required|unique:vets,license_number," . $vet->id,
+            "speciality" => "required",
+            // Validaciones para usuario
+            "name" => "sometimes|required|string|max:255",
+            "email" => "sometimes|required|email|unique:users,email," . $vet->user_id,
+            "password" => "sometimes|required|string|min:6",
         ]);
 
         if ($validator->fails()) {
@@ -100,13 +119,21 @@ class vetController extends Controller
             ], 400);
         }
 
+        // Actualizar datos del usuario relacionado
+        $user = User::find($vet->user_id);
+        if ($request->has('name')) $user->name = $request->name;
+        if ($request->has('email')) $user->email = $request->email;
+        if ($request->has('password')) $user->password = bcrypt($request->password);
+        $user->save();
+
+        // Actualizar datos del veterinario
         $vet->update([
-            'user_id' => $request->user_id,
             'phone' => $request->phone,
             'birthdate' => $request->birthdate,
             'license_number' => $request->license_number,
             'speciality' => $request->speciality,
         ]);
+        $vet->load('user');
 
         return response()->json([
             'message' => 'Veterinario actualizado correctamente',
@@ -128,11 +155,15 @@ class vetController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            "user_id" => "sometimes|required|exists:users,id",
-            "phone" => "sometimes|required|unique:vets,phone",
+            // Validaciones para veterinario
+            "phone" => "sometimes|required|unique:vets,phone," . $vet->id,
             "birthdate" => "sometimes|required|date",
-            "license_number" => "sometimes|required|unique:vets,license_number",
-            "speciality" => "sometimes|required"
+            "license_number" => "sometimes|required|unique:vets,license_number," . $vet->id,
+            "speciality" => "sometimes|required",
+            // Validaciones para usuario
+            "name" => "sometimes|required|string|max:255",
+            "email" => "sometimes|required|email|unique:users,email," . $vet->user_id,
+            "password" => "sometimes|required|string|min:6",
         ]);
 
         if ($validator->fails()) {
@@ -143,13 +174,21 @@ class vetController extends Controller
             ], 400);
         }
 
-        if ($request->has('user_id')) $vet->user_id = $request->user_id;
+        // Actualizar datos del usuario relacionado
+        $user = User::find($vet->user_id);
+        if ($request->has('name')) $user->name = $request->name;
+        if ($request->has('email')) $user->email = $request->email;
+        if ($request->has('password')) $user->password = bcrypt($request->password);
+        $user->save();
+
+        // Actualizar datos del veterinario
         if ($request->has('phone')) $vet->phone = $request->phone;
         if ($request->has('birthdate')) $vet->birthdate = $request->birthdate;
         if ($request->has('license_number')) $vet->license_number = $request->license_number;
         if ($request->has('speciality')) $vet->speciality = $request->speciality;
 
         $vet->save();
+        $vet->load('user');
 
         return response()->json([
             'message' => 'Veterinario actualizado correctamente',

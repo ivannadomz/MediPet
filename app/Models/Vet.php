@@ -15,6 +15,12 @@ class Vet extends Model
         'speciality',
     ];
 
+    protected static function booted()
+    {
+        static::deleting(function ($vet) {
+            $vet->user()->delete();
+        });
+    }
     public function user()
     {
         return $this->belongsTo(User::class);
