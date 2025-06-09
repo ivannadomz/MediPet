@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Branches;
 use Illuminate\Support\Facades\Validator;
 
-class BranchController extends Controller
+class branchController extends Controller
 {
     // Obtener todas las sucursales
     public function index()

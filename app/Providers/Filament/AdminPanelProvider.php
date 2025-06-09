@@ -25,6 +25,7 @@ class AdminPanelProvider extends PanelProvider
     {
         return $panel
             ->default()
+            ->brandName('MediPet')
             ->id('admin')
             ->path('admin')
             ->login()

@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Appointment;
 use Illuminate\Support\Facades\Validator;
 
-class AppointmentController extends Controller
+class appointmentController extends Controller
 {
     // Obtener todas las citas
     public function index()

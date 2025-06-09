@@ -7,12 +7,12 @@ use Illuminate\Http\Request;
 use App\Models\Race;
 use Illuminate\Support\Facades\Validator;
 
-class RaceController extends Controller
+class raceController extends Controller
 {
     // Obtener todas las razas
     public function index()
     {
-        $races = Race::with('specie')->get(); // Incluye la especie relacionada
+        $races = Race::with('specie')->get(); 
 
         return response()->json([
             'races' => $races,

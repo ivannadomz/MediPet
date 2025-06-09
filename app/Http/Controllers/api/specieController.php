@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Specie;
 use Illuminate\Support\Facades\Validator;
 
-class SpecieController extends Controller
+class specieController extends Controller
 {
     // Obtener todas las especies
     public function index()

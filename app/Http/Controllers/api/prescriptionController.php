@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Prescription;
 use Illuminate\Support\Facades\Validator;
 
-class PrescriptionController extends Controller
+class prescriptionController extends Controller
 {
     // Obtener todas las recetas
     public function index()
@@ -109,6 +109,8 @@ class PrescriptionController extends Controller
         ]);
     }
 
+
+    // Actualizar campos específicos de la receta
     public function updatePartial(Request $request, $id)
 {
     $prescription = Prescription::find($id);
@@ -120,7 +122,7 @@ class PrescriptionController extends Controller
         ], 404);
     }
 
-    // Verificamos si vienen datos para actualizar
+    
     $updated = false;
 
     if ($request->has('specifications')) {

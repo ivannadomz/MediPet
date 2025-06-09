@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Products; // Modelo en plural
 use Illuminate\Support\Facades\Validator;
 
-class ProductController extends Controller
+class productController extends Controller
 {
 
     //Mostrar todos 
