@@ -79,6 +79,8 @@ class vetController extends Controller
             'speciality' => $request->speciality,
         ]);
 
+        $user->assignRole('vet'); // Asigna el rol
+
         $vet->load('user');
 
         return response()->json([

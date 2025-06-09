@@ -75,6 +75,8 @@ class ownerController extends Controller
             'address' => $request->address,
         ]);
 
+        $user->assignRole('owner'); // Asigna el rol
+
         $owner->load('user');
 
         return response()->json([
