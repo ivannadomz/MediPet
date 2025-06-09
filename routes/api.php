@@ -51,7 +51,7 @@ Route::put('/appointments/{id}', [appointmentController::class, 'update']);
 Route::patch('/appointments/{id}', [appointmentController::class, 'updatePartial']);
 Route::delete('/appointments/{id}', [appointmentController::class, 'destroy']);
 
-//Rutas para Branches
+//Rutas para Sucursales
 Route::get('/branches', [branchController::class, 'index']);
 Route::post('/branches', [branchController::class, 'store']);
 Route::get('/branches/{id}', [branchController::class, 'show']);
@@ -60,7 +60,6 @@ Route::patch('/branches/{id}', [branchController::class, 'updatePartial']);
 Route::delete('/branches/{id}', [branchController::class, 'destroy']);
 
 //Rutas para Productos
-
 Route::get('/products', [productController::class, 'index']);
 Route::post('/products', [productController::class, 'store']);
 Route::get('/products/{id}', [productController::class, 'show']);

@@ -77,29 +77,7 @@ class petController extends Controller
         return response()->json($data, 200);
     }
 
-    // Eliminar una mascota
-    public function destroy($id)
-    {
-        $pet = Pet::find($id);
-
-        if (!$pet) {
-            $data = [
-                'message' => 'Mascota no encontrada',
-                'status' => '404',
-            ];
-            return response()->json($data, 404);
-        }
-
-        $pet->delete();
-
-        $data = [
-            'message' => 'Mascota eliminada correctamente',
-            'status' => '200',
-        ];
-
-        return response()->json($data, 200);
-    }
-
+    
     // Actualizar una mascota
     public function update(Request $request, $id)
     {
@@ -198,4 +176,28 @@ class petController extends Controller
             'status' => '200',
         ], 200);
     }
+
+    // Eliminar una mascota
+    public function destroy($id)
+    {
+        $pet = Pet::find($id);
+
+        if (!$pet) {
+            $data = [
+                'message' => 'Mascota no encontrada',
+                'status' => '404',
+            ];
+            return response()->json($data, 404);
+        }
+
+        $pet->delete();
+
+        $data = [
+            'message' => 'Mascota eliminada correctamente',
+            'status' => '200',
+        ];
+
+        return response()->json($data, 200);
+    }
+
 }
