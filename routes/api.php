@@ -11,6 +11,7 @@ use App\Http\Controllers\api\branchController;
 use App\Http\Controllers\api\productController;
 use App\Http\Controllers\Api\vetController;
 use App\Http\Controllers\Api\ownerController;
+use App\Http\Controllers\Auth\AuthController;
 
 // Rutas para Pets
 Route::get('/pets', [petController::class, 'index']);
@@ -83,3 +84,16 @@ Route::post('/owners', [ownerController::class, 'createOwner']);
 Route::put('/owners/{id}', [ownerController::class, 'updateOwner']);
 Route::patch('/owners/{id}', [ownerController::class, 'updateOwnerPartial']);
 Route::delete('/owners/{id}', [ownerController::class, 'deleteOwner']);
+
+
+//Rutas para autenticacion 
+Route::post('/register', [AuthController::class, 'register']); 
+Route::post('/login', [AuthController::class, 'login']);        
+
+// Rutas protegidas por autenticación con Sanctum
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']); 
+    Route::get('/user', function (Request $request) {
+        return $request->user();                               
+    });
+});

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Owner;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class ownerController extends Controller
 {
@@ -40,6 +41,7 @@ class ownerController extends Controller
         return response()->json($data, 200);
     }
 
+    
     // Crear un nuevo dueño de mascota
     public function createOwner(Request $request)
     {
@@ -53,6 +55,7 @@ class ownerController extends Controller
             "address" => "required|string|max:255"
         ]);
 
+        // Verificar si la validación falla
         if ($validator->fails()) {
             return response()->json([
                 'message' => 'Error en la validación',
@@ -61,29 +64,44 @@ class ownerController extends Controller
             ], 400);
         }
 
-        // Crear usuario
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-        ]);
+        DB::beginTransaction();
+        try {
+            // Crear usuario
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => bcrypt($request->password),
+            ]);
 
-        // Crear dueño de mascota
-        $owner = Owner::create([
-            'user_id' => $user->id,
-            'phone' => $request->phone,
-            'address' => $request->address,
-        ]);
+            // Crear dueño de mascota
+            $owner = Owner::create([
+                'user_id' => $user->id,
+                'phone' => $request->phone,
+                'address' => $request->address,
+            ]);
 
-        $user->assignRole('owner'); // Asigna el rol
+            // Asignar rol de owner al usuario
+            $user->assignRole('owner');
 
-        $owner->load('user');
+            DB::commit();
+            // Cargar la relación del usuario en el dueño
+            $owner->load('user');
 
-        return response()->json([
-            'owner' => $owner,
-            'status' => '201',
-        ], 201);
+            // Retornar la respuesta con el dueño creado
+            return response()->json([
+                'owner' => $owner,
+                'status' => '201',
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Error al crear el dueño',
+                'error' => $e->getMessage(),
+                'status' => '500',
+            ], 500);
+        }
     }
+
 
     //Actualizar un dueño de mascota
     public function updateOwner(Request $request, $id)

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Vet;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class vetController extends Controller
 {
@@ -41,7 +42,7 @@ class vetController extends Controller
     }
 
     // Crear un nuevo veterinario
-    public function createVet(Request $request)
+   public function createVet(Request $request)
     {
         $validator = Validator::make($request->all(), [
             // Validación para usuario
@@ -63,30 +64,42 @@ class vetController extends Controller
             ], 400);
         }
 
-        // Crear usuario
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-        ]);
+        DB::beginTransaction();
+        try {
+            // Crear usuario
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => bcrypt($request->password),
+            ]);
 
-        // Crear veterinario
-        $vet = Vet::create([
-            'user_id' => $user->id,
-            'phone' => $request->phone,
-            'birthdate' => $request->birthdate,
-            'license_number' => $request->license_number,
-            'speciality' => $request->speciality,
-        ]);
+            // Crear veterinario
+            $vet = Vet::create([
+                'user_id' => $user->id,
+                'phone' => $request->phone,
+                'birthdate' => $request->birthdate,
+                'license_number' => $request->license_number,
+                'speciality' => $request->speciality,
+            ]);
 
-        $user->assignRole('vet'); // Asigna el rol
+            $user->assignRole('vet'); // Asigna el rol
 
-        $vet->load('user');
+            DB::commit();
 
-        return response()->json([
-            'vet' => $vet,
-            'status' => '201',
-        ], 201);
+            $vet->load('user');
+
+            return response()->json([
+                'vet' => $vet,
+                'status' => '201',
+            ], 201);
+        } catch (\Exception $e) {
+                DB::rollBack();
+                return response()->json([
+                    'message' => 'Error al crear el veterinario',
+                    'error' => $e->getMessage(),
+                    'status' => '500',
+                ], 500);
+            }
     }
 
     //Actualizar un veterinario
