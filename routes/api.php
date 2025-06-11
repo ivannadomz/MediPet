@@ -90,6 +90,7 @@ Route::put('/owners/{id}', [ownerController::class, 'updateOwner']);
 Route::patch('/owners/{id}', [ownerController::class, 'updateOwnerPartial']);
 Route::delete('/owners/{id}', [ownerController::class, 'deleteOwner']);
 
+Route::get('/owners/by-user/{user_id}', [OwnerController::class, 'getOwnerByUser']);
 
 //Rutas para autenticacion 
 Route::post('/register', [AuthController::class, 'register']); 

@@ -6,12 +6,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Owner;
 use App\Models\User;
+use App\Models\Pet;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class ownerController extends Controller
 {
-    //Obtener todos los dueños de mascotas
     public function getOwners()
     {
         $owners = Owner::with('user')->get();
@@ -21,7 +22,6 @@ class ownerController extends Controller
         ], 200);
     }
 
-    //Encontrar un dueño por ID
     public function getOwnerById($id)
     {
         $owner = Owner::with('user')->find($id);
@@ -33,29 +33,22 @@ class ownerController extends Controller
             ], 404);
         }
 
-        $data = [
+        return response()->json([
             'owner' => $owner,
             'status' => '200',
-        ];
-
-        return response()->json($data, 200);
+        ], 200);
     }
 
-    
-    // Crear un nuevo dueño de mascota
     public function createOwner(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            // Validación para usuario
             "name" => "required|string|max:255",
             "email" => "required|email|unique:users,email",
             "password" => "required|string|min:6",
-            // Validación para dueño
             "phone" => "required|unique:owners,phone",
             "address" => "required|string|max:255"
         ]);
 
-        // Verificar si la validación falla
         if ($validator->fails()) {
             return response()->json([
                 'message' => 'Error en la validación',
@@ -66,28 +59,23 @@ class ownerController extends Controller
 
         DB::beginTransaction();
         try {
-            // Crear usuario
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => bcrypt($request->password),
             ]);
 
-            // Crear dueño de mascota
             $owner = Owner::create([
                 'user_id' => $user->id,
                 'phone' => $request->phone,
                 'address' => $request->address,
             ]);
 
-            // Asignar rol de owner al usuario
             $user->assignRole('owner');
 
             DB::commit();
-            // Cargar la relación del usuario en el dueño
             $owner->load('user');
 
-            // Retornar la respuesta con el dueño creado
             return response()->json([
                 'owner' => $owner,
                 'status' => '201',
@@ -102,8 +90,6 @@ class ownerController extends Controller
         }
     }
 
-
-    //Actualizar un dueño de mascota
     public function updateOwner(Request $request, $id)
     {
         $owner = Owner::find($id);
@@ -116,11 +102,9 @@ class ownerController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            // Validaciones para usuario
             "name" => "sometimes|required|string|max:255",
             "email" => "sometimes|required|email|unique:users,email," . $owner->user_id,
             "password" => "sometimes|required|string|min:6",
-            // Validación para dueño
             "phone" => "required|unique:owners,phone," . $owner->id,
             "address" => "required|string|max:255"
         ]);
@@ -133,14 +117,12 @@ class ownerController extends Controller
             ], 400);
         }
 
-        // Actualizar datos del usuario relacionado
         $user = User::find($owner->user_id);
         if ($request->has('name')) $user->name = $request->name;
         if ($request->has('email')) $user->email = $request->email;
         if ($request->has('password')) $user->password = bcrypt($request->password);
         $user->save();
 
-        // Actualizar datos del dueño
         $owner->update([
             'phone' => $request->phone,
             'address' => $request->address,
@@ -149,14 +131,12 @@ class ownerController extends Controller
         $owner->load('user');
 
         return response()->json([
-            'message' => 'Veterinario actualizado correctamente',
+            'message' => 'Dueño actualizado correctamente',
             'owner' => $owner,
             'status' => '200',
         ], 200);
     }
 
-
-    //Actualizar parcialmente un dueño
     public function updateOwnerPartial(Request $request, $id)
     {
         $owner = Owner::find($id);
@@ -169,13 +149,11 @@ class ownerController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            // Validaciones para usuario
             "name" => "sometimes|required|string|max:255",
             "email" => "sometimes|required|email|unique:users,email," . $owner->user_id,
             "password" => "sometimes|required|string|min:6",
-            // Validaciones para owner
             "phone" => "sometimes|required|unique:owners,phone," . $owner->id,
-            'address' => "sometimes|required|string|max:255"
+            "address" => "sometimes|required|string|max:255"
         ]);
 
         if ($validator->fails()) {
@@ -186,14 +164,12 @@ class ownerController extends Controller
             ], 400);
         }
 
-        // Actualizar datos del usuario relacionado
         $user = User::find($owner->user_id);
         if ($request->has('name')) $user->name = $request->name;
         if ($request->has('email')) $user->email = $request->email;
         if ($request->has('password')) $user->password = bcrypt($request->password);
         $user->save();
 
-        // Actualizar datos del dueño
         if ($request->has('phone')) $owner->phone = $request->phone;
         if ($request->has('address')) $owner->address = $request->address;
         $owner->save();
@@ -207,26 +183,83 @@ class ownerController extends Controller
         ], 200);
     }
 
-    //Eliminar un owner
     public function deleteOwner($id)
     {
         $owner = Owner::find($id);
 
         if (!$owner) {
-            $data = [
-                'message' => 'Owenr no encontrado',
+            return response()->json([
+                'message' => 'Owner no encontrado',
                 'status' => '404',
-            ];
-            return response()->json($data, 404);
+            ], 404);
         }
 
-        $owner->delete();
+        DB::beginTransaction();
+        try {
+            // Eliminar mascotas del owner
+            $owner->pets()->delete();
 
-        $data = [
-            'message' => 'Dueño eliminado correctamente',
+            // Eliminar user
+            $user = User::find($owner->user_id);
+
+            $owner->delete();
+
+            if ($user) {
+                $user->delete();
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Dueño, mascotas y usuario eliminados correctamente',
+                'status' => '200',
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Error al eliminar el dueño',
+                'error' => $e->getMessage(),
+                'status' => '500',
+            ], 500);
+        }
+    }
+
+    public function profile()
+    {
+        $user = Auth::user();
+        $owner = $user->owner;
+
+        if (!$owner) {
+            return response()->json([
+                'message' => 'No se encontró información del dueño',
+                'status' => '404',
+            ], 404);
+        }
+
+        return response()->json([
+            'name' => $user->name,
+            'email' => $user->email,
+            'phone' => $owner->phone,
+            'address' => $owner->address,
             'status' => '200',
-        ];
+        ], 200);
+    }
 
-        return response()->json($data, 200);
+    public function getOwnerByUser($userId)
+    {
+    $owner = Owner::with('user')->where('user_id', $userId)->first();
+
+    if (!$owner) {
+        return response()->json([
+            'message' => 'Dueño no encontrado para este usuario',
+            'status' => '404',
+        ], 404);
+    }
+
+    return response()->json([
+        'owner' => $owner,
+        'status' => '200',
+    ], 200);
     }
 }
