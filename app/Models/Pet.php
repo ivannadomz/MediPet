@@ -22,14 +22,14 @@ class Pet extends Model
         return $this->belongsTo(Specie::class, 'species_id');
     }
 
-    public function user()
+    public function owner()
     {
-        return $this->belongsTo(User::class, 'owner_id');
+        return $this->belongsTo(Owner::class, 'owner_id');
     }
 
     public function race()
     {
-    return $this->belongsTo(Race::class, 'race_id');
+        return $this->belongsTo(Race::class, 'race_id');
     }
 
     public function appointment()

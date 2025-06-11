@@ -5,13 +5,55 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Pet;
+use App\Models\Owner;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
-class petController extends Controller
+class PetController extends Controller
 {
-    public function index()
+    // Obtener solo las mascotas del usuario autenticado
+    public function index(Request $request)
     {
-        $pets = Pet::all();
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'Usuario no autenticado',
+                'status' => '401',
+            ], 401);
+        }
+
+        // Buscar el owner asociado al usuario
+        $owner = Owner::where('user_id', $user->id)->first();
+
+        if (!$owner) {
+            return response()->json([
+                'message' => 'No se encontró el dueño asociado al usuario',
+                'status' => '404',
+            ], 404);
+        }
+
+        // Obtener mascotas del owner
+        $pets = $owner->pets;
+
+        return response()->json([
+            'pets' => $pets,
+            'status' => '200',
+        ], 200);
+    }
+
+    // Obtener mascotas por owner_id
+    public function petsByOwner($ownerId)
+    {
+        $pets = Pet::where('owner_id', $ownerId)->get();
+
+        if ($pets->isEmpty()) {
+            return response()->json([
+                'message' => 'No se encontraron mascotas para este dueño',
+                'status' => '404',
+            ], 404);
+        }
+
         return response()->json([
             'pets' => $pets,
             'status' => '200',
@@ -22,78 +64,9 @@ class petController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'birthdate' => 'required|date',
-            'gender' => 'required',
-            'weight' => 'nullable|numeric',
-            'allergies' => 'nullable',
-            'species_id' => 'required|exists:species,id',
-            'owner_id' => 'required|exists:owners,id',
-            'race_id' => 'nullable|exists:races,id',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Error en la validación',
-                'errors' => $validator->errors(),
-                'status' => '400',
-            ], 400);
-        }
-
-        $pet = Pet::create([
-            'name' => $request->name,
-            'birthdate' => $request->birthdate,
-            'gender' => $request->gender,
-            'weight' => $request->weight,
-            'allergies' => $request->allergies,
-            'species_id' => $request->species_id,
-            'owner_id' => $request->owner_id,
-            'race_id' => $request->race_id,
-        ]);
-
-        return response()->json([
-            'pet' => $pet,
-            'status' => '201',
-        ], 201);
-    }
-
-    // Encontrar una mascota por ID
-    public function show($id)
-    {
-        $pet = Pet::find($id);
-
-        if (!$pet) {
-            return response()->json([
-                'message' => 'Mascota no encontrada',
-                'status' => '404',
-            ], 404);
-        }
-
-        $data = [
-            'pet' => $pet,
-            'status' => '200',
-        ];
-
-        return response()->json($data, 200);
-    }
-
-    
-    // Actualizar una mascota
-    public function update(Request $request, $id)
-    {
-        $pet = Pet::find($id);
-
-        if (!$pet) {
-            return response()->json([
-                'message' => 'Mascota no encontrada',
-                'status' => '404',
-            ], 404);
-        }
-
-        $validator = Validator::make($request->all(), [
             'name' => 'required|string',
             'birthdate' => 'required|date',
-            'gender' => 'required',
+            'gender' => 'required|string',
             'weight' => 'nullable|numeric',
             'allergies' => 'nullable|string',
             'species_id' => 'required|exists:species,id',
@@ -109,26 +82,79 @@ class petController extends Controller
             ], 400);
         }
 
-        $pet->update([
-            'name' => $request->name,
-            'birthdate' => $request->birthdate,
-            'gender' => $request->gender,
-            'weight' => $request->weight,
-            'allergies' => $request->allergies,
-            'species_id' => $request->species_id,
-            'owner_id' => $request->owner_id,
-            'race_id' => $request->race_id,
+        $pet = Pet::create($request->only([
+            'name', 'birthdate', 'gender', 'weight', 'allergies',
+            'species_id', 'owner_id', 'race_id'
+        ]));
+
+        return response()->json([
+            'pet' => $pet,
+            'status' => '201',
+        ], 201);
+    }
+
+    // Mostrar una mascota por ID
+    public function show($id)
+    {
+        $pet = Pet::find($id);
+
+        if (!$pet) {
+            return response()->json([
+                'message' => 'Mascota no encontrada',
+                'status' => '404',
+            ], 404);
+        }
+
+        return response()->json([
+            'pet' => $pet,
+            'status' => '200',
+        ], 200);
+    }
+
+    // Actualizar todos los campos
+    public function update(Request $request, $id)
+    {
+        $pet = Pet::find($id);
+
+        if (!$pet) {
+            return response()->json([
+                'message' => 'Mascota no encontrada',
+                'status' => '404',
+            ], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string',
+            'birthdate' => 'required|date',
+            'gender' => 'required|string',
+            'weight' => 'nullable|numeric',
+            'allergies' => 'nullable|string',
+            'species_id' => 'required|exists:species,id',
+            'owner_id' => 'required|exists:owners,id',
+            'race_id' => 'nullable|exists:races,id',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Error en la validación',
+                'errors' => $validator->errors(),
+                'status' => '400',
+            ], 400);
+        }
+
+        $pet->update($request->only([
+            'name', 'birthdate', 'gender', 'weight', 'allergies',
+            'species_id', 'owner_id', 'race_id'
+        ]));
 
         return response()->json([
             'message' => 'Mascota actualizada correctamente',
             'pet' => $pet,
             'status' => '200',
         ], 200);
-        }
+    }
 
-    // Actualizar campo por separado
-
+    // Actualización parcial
     public function updatePartial(Request $request, $id)
     {
         $pet = Pet::find($id);
@@ -143,7 +169,7 @@ class petController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|required|string',
             'birthdate' => 'sometimes|required|date',
-            'gender' => 'sometimes|required',
+            'gender' => 'sometimes|required|string',
             'weight' => 'sometimes|nullable|numeric',
             'allergies' => 'sometimes|nullable|string',
             'species_id' => 'sometimes|required|exists:species,id',
@@ -159,16 +185,10 @@ class petController extends Controller
             ], 400);
         }
 
-        if ($request->has('name')) $pet->name = $request->name;
-        if ($request->has('birthdate')) $pet->birthdate = $request->birthdate;
-        if ($request->has('gender')) $pet->gender = $request->gender;
-        if ($request->has('weight')) $pet->weight = $request->weight;
-        if ($request->has('allergies')) $pet->allergies = $request->allergies;
-        if ($request->has('species_id')) $pet->species_id = $request->species_id;
-        if ($request->has('owner_id')) $pet->owner_id = $request->owner_id;
-        if ($request->has('race_id')) $pet->race_id = $request->race_id;
-
-        $pet->save();
+        $pet->update($request->only([
+            'name', 'birthdate', 'gender', 'weight', 'allergies',
+            'species_id', 'owner_id', 'race_id'
+        ]));
 
         return response()->json([
             'message' => 'Mascota actualizada correctamente',
@@ -177,27 +197,23 @@ class petController extends Controller
         ], 200);
     }
 
-    // Eliminar una mascota
+    // Eliminar mascota
     public function destroy($id)
     {
         $pet = Pet::find($id);
 
         if (!$pet) {
-            $data = [
+            return response()->json([
                 'message' => 'Mascota no encontrada',
                 'status' => '404',
-            ];
-            return response()->json($data, 404);
+            ], 404);
         }
 
         $pet->delete();
 
-        $data = [
+        return response()->json([
             'message' => 'Mascota eliminada correctamente',
             'status' => '200',
-        ];
-
-        return response()->json($data, 200);
+        ], 200);
     }
-
 }

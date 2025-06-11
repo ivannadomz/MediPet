@@ -14,12 +14,17 @@ use App\Http\Controllers\Api\ownerController;
 use App\Http\Controllers\Auth\AuthController;
 
 // Rutas para Pets
-Route::get('/pets', [petController::class, 'index']);
-Route::get('/pets/{id}', [petController::class, 'show']);
-Route::post('/pets', [petController::class, 'store']);
-Route::put('/pets/{id}', [petController::class, 'update']);
-Route::patch('/pets/{id}', [petController::class, 'updatePartial']);
-Route::delete('/pets/{id}', [petController::class, 'destroy']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/pets', [petController::class, 'userPets']);
+    Route::get('/pets/{id}', [petController::class, 'show']);
+    Route::post('/pets', [petController::class, 'store']);
+    Route::put('/pets/{id}', [petController::class, 'update']);
+    Route::patch('/pets/{id}', [petController::class, 'updatePartial']);
+    Route::delete('/pets/{id}', [petController::class, 'destroy']);
+
+     Route::get('/pets', [PetController::class, 'index']); // mascotas del usuario autenticado
+    Route::get('/pets/owner/{ownerId}', [PetController::class, 'petsByOwner']);
+    });
 
 // Rutas para Species
 Route::get('/species', [specieController::class, 'index']);
