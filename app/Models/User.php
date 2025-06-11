@@ -14,7 +14,7 @@ class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles, HasApiTokens;
-     
+
 
     /**
      * The attributes that are mass assignable.
@@ -58,7 +58,17 @@ class User extends Authenticatable
         return Str::of($this->name)
             ->explode(' ')
             ->take(2)
-            ->map(fn ($word) => Str::substr($word, 0, 1))
+            ->map(fn($word) => Str::substr($word, 0, 1))
             ->implode('');
+    }
+
+    public function owner()
+    {
+        return $this->hasOne(Owner::class);
+    }
+
+    public function vet()
+    {
+        return $this->hasOne(Vet::class);
     }
 }
