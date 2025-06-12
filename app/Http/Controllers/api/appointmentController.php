@@ -20,6 +20,28 @@ class appointmentController extends Controller
         ], 200);
     }
 
+    public function getAppointmentsByPet($petId)
+{
+    
+
+    $appointments = Appointment::with(['vet.user', 'branch']) // Agregar el usuario del veterinario
+        ->where('pet_id', $petId)
+        ->get();
+
+    if ($appointments->isEmpty()) {
+        return response()->json([
+            'message' => 'No hay citas para esta mascota',
+            'status' => '404',
+        ], 404);
+    }
+
+    return response()->json([
+        'appointments' => $appointments,
+        'status' => '200',
+    ], 200);
+}
+
+
     // Crear una nueva cita
     public function store(Request $request)
     {
@@ -194,4 +216,17 @@ class appointmentController extends Controller
             'status' => '200',
         ], 200);
     }
+
+    public function cancelAppointment($id)
+{
+    $appointment = Appointment::find($id);
+    if (!$appointment) {
+        return response()->json(['message' => 'Cita no encontrada'], 404);
+    }
+
+    $appointment->update(['status' => 'canceled']);
+
+    return response()->json(['message' => 'Cita cancelada'], 200);
+}
+
 }

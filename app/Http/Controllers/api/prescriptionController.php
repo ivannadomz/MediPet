@@ -10,9 +10,18 @@ use Illuminate\Support\Facades\Validator;
 class prescriptionController extends Controller
 {
     // Obtener todas las recetas
-    public function index()
+    public function index(Request $request)
     {
-        $prescriptions = Prescription::all();
+        // Leer el parámetro appointment_id si existe
+        $appointmentId = $request->query('appointment_id');
+
+        if ($appointmentId) {
+            // Filtrar las prescripciones por appointment_id
+            $prescriptions = Prescription::where('appointment_id', $appointmentId)->get();
+        } else {
+            // Si no hay parámetro, regresar todas las prescripciones
+            $prescriptions = Prescription::all();
+        }
 
         return response()->json([
             'prescriptions' => $prescriptions,

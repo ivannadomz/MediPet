@@ -47,7 +47,7 @@ Route::put('/prescriptions/{id}', [prescriptionController::class, 'update']);
 Route::patch('/prescriptions/{id}', [prescriptionController::class, 'updatePartial']);
 Route::delete('/prescriptions/{id}', [prescriptionController::class, 'destroy']);
 
-//Rutas para Citas
+// Rutas para Citas
 Route::middleware('auth:api')->group(function () {
     Route::get('/appointments', [AppointmentController::class, 'index']);
     Route::post('/appointments', [AppointmentController::class, 'store']);
@@ -55,6 +55,10 @@ Route::middleware('auth:api')->group(function () {
     Route::put('/appointments/{id}', [AppointmentController::class, 'update']);
     Route::patch('/appointments/{id}', [AppointmentController::class, 'updatePartial']);
     Route::delete('/appointments/{id}', [AppointmentController::class, 'destroy']);
+    
+
+    Route::get('/appointments/pet/{petId}', [AppointmentController::class, 'getAppointmentsByPet']);
+    Route::put('/appointments/{id}/cancel', [AppointmentController::class, 'cancelAppointment']);
 });
 
 //Rutas para Sucursales
