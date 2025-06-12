@@ -32,11 +32,12 @@ class PetResource extends Resource
                     ->label('Nacimiento')
                     ->required(),
 
+                
                 Forms\Components\Select::make('owner_id')
                     ->label('Dueño')
-                    ->relationship('user', 'name')
-                    ->preload()
+                    ->options(\App\Models\Owner::with('user')->get()->pluck('user.name', 'id'))
                     ->searchable()
+                    ->preload()
                     ->required(),
                     
                 Forms\Components\TextInput::make('gender')
@@ -107,7 +108,7 @@ class PetResource extends Resource
                     ->sortable()
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('user.name')
+                Tables\Columns\TextColumn::make('owner.user.name')
                     ->label('Dueño')
                     ->sortable()
                     ->searchable(),
