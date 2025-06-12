@@ -51,12 +51,12 @@
       border-radius: 10px;
       font-size: 0.95rem;
       border: 2px solid #b3dcf2;
-      background-color: #ffffff; /* Fondo blanco */
+      background-color: #ffffff;
       color: #004c77;
     }
 
     .input-group .form-control {
-      background-color: #ffffff; /* Fondo blanco */
+      background-color: #ffffff;
       border-right: none;
       border-radius: 10px 0 0 10px;
     }
@@ -64,7 +64,7 @@
     .form-control:focus {
       border-color: #66b7e4;
       box-shadow: none;
-      background-color: #ffffff; /* Fondo blanco al enfocar */
+      background-color: #ffffff;
     }
 
     .btn-login {
@@ -99,6 +99,21 @@
     .input-group-text:hover i {
       color: #004c77;
     }
+
+    .forgot-password {
+      margin-top: 16px;
+      text-align: center;
+    }
+
+    .forgot-password a {
+      font-size: 0.95rem;
+      color: #0077b6;
+      text-decoration: none;
+    }
+
+    .forgot-password a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -132,6 +147,11 @@
         </div>
       </div>
       <button type="submit" class="btn-login">Entrar</button>
+
+      <!-- Enlace de Olvidaste tu contraseña -->
+      <div class="forgot-password">
+        <a href="{{ url('/forgot-password') }}">¿Olvidaste tu contraseña?</a>
+      </div>
     </form>
   </div>
 

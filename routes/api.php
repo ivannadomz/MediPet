@@ -12,6 +12,7 @@ use App\Http\Controllers\api\productController;
 use App\Http\Controllers\Api\vetController;
 use App\Http\Controllers\Api\ownerController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/pets', [petController::class, 'index']); // mascotas del usuario autenticado
@@ -106,3 +107,6 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();                               
     });
 });
+
+// Rutas para obtener el token de restablecimiento de contraseña
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);

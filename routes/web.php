@@ -14,7 +14,6 @@ Route::view('dashboard', 'dashboard')
 
 
 
-
 Route::get('/admin/login', [CustomLoginController::class, 'showLogInform'])->name('custom.login.form');
 Route::post('/admin/login', [CustomLoginController::class, 'login'])->name('custom.login');
 Route::post('/admin/logout', [CustomLoginController::class, 'logout'])->name('filament.admin.auth.logout');

@@ -83,21 +83,21 @@ class PetController extends Controller
 
     // Mostrar una mascota por ID
     public function show($id)
-    {
-        $pet = Pet::find($id);
+{
+    $pet = Pet::with(['specie', 'race'])->find($id);
 
-        if (!$pet) {
-            return response()->json([
-                'message' => 'Mascota no encontrada',
-                'status' => '404',
-            ], 404);
-        }
-
+    if (!$pet) {
         return response()->json([
-            'pet' => $pet,
-            'status' => '200',
-        ], 200);
+            'message' => 'Mascota no encontrada',
+            'status' => '404',
+        ], 404);
     }
+
+    return response()->json([
+        'pet' => $pet,
+        'status' => '200',
+    ], 200);
+}
 
     // Actualizar todos los campos
     public function update(Request $request, $id)
