@@ -17,7 +17,7 @@ class ownerController extends Controller
     {
         $owners = Owner::with('user')->get();
         return response()->json([
-            'pets' => $owners,
+            'owners' => $owners,
             'status' => '200',
         ], 200);
     }
