@@ -13,18 +13,16 @@ use App\Http\Controllers\Api\vetController;
 use App\Http\Controllers\Api\ownerController;
 use App\Http\Controllers\Auth\AuthController;
 
-// Rutas para Pets
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/pets', [petController::class, 'userPets']);
+    Route::get('/pets', [petController::class, 'index']); // mascotas del usuario autenticado
     Route::get('/pets/{id}', [petController::class, 'show']);
     Route::post('/pets', [petController::class, 'store']);
     Route::put('/pets/{id}', [petController::class, 'update']);
     Route::patch('/pets/{id}', [petController::class, 'updatePartial']);
     Route::delete('/pets/{id}', [petController::class, 'destroy']);
 
-     Route::get('/pets', [PetController::class, 'index']); // mascotas del usuario autenticado
-    Route::get('/pets/owner/{ownerId}', [PetController::class, 'petsByOwner']);
-    });
+    Route::get('/pets/owner/{ownerId}', [petController::class, 'petsByOwner']);
+});
 
 // Rutas para Species
 Route::get('/species', [specieController::class, 'index']);
@@ -34,14 +32,13 @@ Route::put('/species/{id}', [specieController::class, 'update']);
 Route::patch('/species/{id}', [specieController::class, 'updatePartial']);
 Route::delete('/species/{id}', [specieController::class, 'destroy']);
 
-//Rutas para Razas
+// Rutas para Races
 Route::get('/races', [raceController::class, 'index']);
 Route::post('/races', [raceController::class, 'store']);
 Route::get('/races/{id}', [raceController::class, 'show']);
 Route::put('/races/{id}', [raceController::class, 'update']);
 Route::patch('/races/{id}', [raceController::class, 'updatePartial']);
 Route::delete('/races/{id}', [raceController::class, 'destroy']);
-
 //Rutas para Prescripciones
 Route::get('/prescriptions', [prescriptionController::class, 'index']);
 Route::post('/prescriptions', [prescriptionController::class, 'store']);
@@ -51,12 +48,14 @@ Route::patch('/prescriptions/{id}', [prescriptionController::class, 'updateParti
 Route::delete('/prescriptions/{id}', [prescriptionController::class, 'destroy']);
 
 //Rutas para Citas
-Route::get('/appointments', [appointmentController::class, 'index']);
-Route::post('/appointments', [appointmentController::class, 'store']);
-Route::get('/appointments/{id}', [appointmentController::class, 'show']);
-Route::put('/appointments/{id}', [appointmentController::class, 'update']);
-Route::patch('/appointments/{id}', [appointmentController::class, 'updatePartial']);
-Route::delete('/appointments/{id}', [appointmentController::class, 'destroy']);
+Route::middleware('auth:api')->group(function () {
+    Route::get('/appointments', [AppointmentController::class, 'index']);
+    Route::post('/appointments', [AppointmentController::class, 'store']);
+    Route::get('/appointments/{id}', [AppointmentController::class, 'show']);
+    Route::put('/appointments/{id}', [AppointmentController::class, 'update']);
+    Route::patch('/appointments/{id}', [AppointmentController::class, 'updatePartial']);
+    Route::delete('/appointments/{id}', [AppointmentController::class, 'destroy']);
+});
 
 //Rutas para Sucursales
 Route::get('/branches', [branchController::class, 'index']);

@@ -15,31 +15,19 @@ class PetController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-
         if (!$user) {
-            return response()->json([
-                'message' => 'Usuario no autenticado',
-                'status' => '401',
-            ], 401);
+            return response()->json(['message' => 'Usuario no autenticado'], 401);
         }
 
-        // Buscar el owner asociado al usuario
         $owner = Owner::where('user_id', $user->id)->first();
-
         if (!$owner) {
-            return response()->json([
-                'message' => 'No se encontró el dueño asociado al usuario',
-                'status' => '404',
-            ], 404);
+            return response()->json(['message' => 'Dueño no encontrado'], 404);
         }
 
-        // Obtener mascotas del owner
-        $pets = $owner->pets;
+        // Cargar especie y raza con relaciones (specie, race)
+        $pets = Pet::with(['specie', 'race'])->where('owner_id', $owner->id)->get();
 
-        return response()->json([
-            'pets' => $pets,
-            'status' => '200',
-        ], 200);
+        return response()->json(['pets' => $pets], 200);
     }
 
     // Obtener mascotas por owner_id
